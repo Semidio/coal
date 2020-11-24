@@ -27,7 +27,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   if (localStorage["buttonAction"] == 'addFeed') {
     chrome.tabs.executeScript(tab.id, {code: "s=document.createElement('script');s.type='text/javascript';s.src='"+localStorage['page']+"/?feedlet&js&'+(new Date()).getTime();document.getElementsByTagName('head')[0].appendChild(s);"});
   } else {
-    chrome.tabs.create({'url': localStorage["page"]}, function(tab) {});
+    chrome.tabs.create({'url': localStorage["page"].match(/.*\//)[0]}, function(tab) {});
   }
 });
 
@@ -37,7 +37,7 @@ function tab_updated(tabId){
       if(typeof localStorage["api_key"] != 'undefined'){
         page = localStorage["page"];
         api = localStorage["api_key"];
-        var reqURL = page + "/?xhr";
+        var reqURL = page + "?items";
         $.ajax({
           type: 'POST',
           url: reqURL,
@@ -46,7 +46,8 @@ function tab_updated(tabId){
           },
           success: function(result){
             console.log(result);
-            var unread = result.match(/Fever.Reader.totalUnread\t*= ([0-9]*)/)[1];
+            console.log(result.total_items);
+            var unread = result.total_items;
             if (unread != 0) {
               chrome.browserAction.setBadgeText({ text : unread + ""});
             }
