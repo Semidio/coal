@@ -50,8 +50,9 @@ function tab_updated(tabId){
             var unread = result.total_items;
             if (unread != 0) {
               chrome.browserAction.setBadgeText({ text : unread + ""});
-            }
-          }
+            } else{
+              chrome.browserAction.setBadgeText({ text : ""});
+          }}
         });
       }
       else{
